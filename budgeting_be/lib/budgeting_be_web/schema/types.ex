@@ -11,9 +11,11 @@ defmodule BudgetingBeWeb.Schema.Types do
   end
 
   object :transaction do
+    field :id, :id
     field :amount, :decimal
     field :date, :datetime
     field :details, :string
+    field :transaction_type_id, :id
     field :transaction_type, :transaction_type, resolve: assoc(:transaction_type)
   end
 

@@ -2,6 +2,7 @@ BACKEND:
 
 Help from:
 	http://samueldavies.net/2017/09/16/how-to-setup-a-graphql-server-in-elixir-using-abinsthe/
+	https://ryanswapp.com/2016/12/03/phoenix-graphql-tutorial-with-phoenix-add-crud-using-mutations/
 
 Started backend with this command:
 mix phx.new budgeting_be --database postgres --no-brunch --no-html .

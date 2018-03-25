@@ -16,7 +16,7 @@ defmodule BudgetingBe.Transaction do
   @doc false
   def changeset(transaction, attrs) do
     transaction
-    |> cast(attrs, [:details, :date, :amount])
-    |> validate_required([:details, :date, :amount])
+    |> cast(attrs, [:details, :date, :amount, :user_id, :transaction_type_id])
+    |> validate_required([:details, :date, :amount, :user_id])
   end
 end

@@ -20,6 +20,7 @@
                         'Elixir.BudgetingBeWeb.Router.Helpers',
                         'Elixir.BudgetingBeWeb.Schema',
                         'Elixir.BudgetingBeWeb.Schema.Types',
+                        'Elixir.BudgetingBeWeb.TransactionResolver',
                         'Elixir.BudgetingBeWeb.UserSocket']},
               {registered,[]},
               {vsn,"0.0.1"},
