@@ -1,4 +1,5 @@
 defmodule BudgetingBeWeb.Schema.Types do
+  import Ecto.Query
   use Absinthe.Schema.Notation
   use Absinthe.Ecto, repo: BudgetingBe.Repo
 
@@ -7,7 +8,11 @@ defmodule BudgetingBeWeb.Schema.Types do
     field :email, :string
     field :name, :string
     field :password, :string
-    field :transactions, list_of(:transaction), resolve: assoc(:transactions)
+    field :transactions, list_of(:transaction) do
+      resolve assoc(:transactions, fn transactions_query, _args, _context ->
+        transactions_query |> order_by(desc: :date)
+      end)
+    end
   end
 
   object :transaction do
@@ -20,6 +25,7 @@ defmodule BudgetingBeWeb.Schema.Types do
   end
 
   object :transaction_type do
+    field :id, :id
     field :name, :string
   end
 end

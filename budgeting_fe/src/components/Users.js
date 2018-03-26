@@ -17,7 +17,8 @@ class Users extends Component {
     const usersToRender = this.props.usersQuery.users
 
     return (
-      <div>{usersToRender.map(user => <User key={user.id} user={user} />)}</div>
+      <div>{usersToRender.map(user => <User key={user.id} user={user} 
+        selectedUser={this.props.selectedUser} changeUser={() => this.props.changeUser(user.id, user.name)} />)}</div>
     )
   }
 }

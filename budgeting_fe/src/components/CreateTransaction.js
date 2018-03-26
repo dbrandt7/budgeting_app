@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
-import { graphql } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag'
+
+import { TRANSACTIONS_QUERY } from './Transactions'
 
 class CreateTransaction extends Component {
   state = {
@@ -8,11 +10,19 @@ class CreateTransaction extends Component {
     date: '',
     time: '',
     amount: '',
-    userId: '',
     transactionTypeId: '1'
   }
 
   render() {
+    if (this.props.transactionTypesQuery && this.props.transactionTypesQuery.loading) {
+      return <div>Loading</div>
+    }
+
+    if (this.props.transactionTypesQuery && this.props.transactionTypesQuery.error) {
+      return <div>Error</div>
+    }
+    const transactionsTypesToRender = this.props.transactionTypesQuery.transactionTypes
+    
     return (
       <div>
         <div>
@@ -36,18 +46,10 @@ class CreateTransaction extends Component {
             value={this.state.amount}
             onChange={e => this.setState({ amount: e.target.value })}
             type="number"
-            placeholder = "amount"
-          />
-          <input
-            value={this.state.userId}
-            onChange={e => this.setState({ userId: e.target.value })}
-            type="number"
+            placeholder = "Amount"
           />
           <select value={this.state.transactionTypeId} onChange={e=> this.setState({ transactionTypeId: e.target.value })}>
-            <option value="1">Food</option>
-            <option value="2">Travel</option>
-            <option value="3">Bills</option>
-            <option value="4">Entertainment</option>
+            {transactionsTypesToRender.map(transactionType => <option key={transactionType.id} value={transactionType.id}>{transactionType.name}</option>)}
           </select>
         </div>
         <button onClick={() => this._createTransaction()}>Submit</button>
@@ -56,9 +58,9 @@ class CreateTransaction extends Component {
   }
 
   _createTransaction = async () => {
-    const { details, date, time, amount, userId, transactionTypeId  } = this.state
+    const { details, date, time, amount, transactionTypeId  } = this.state
+    const userId  = this.props.selectedUser
     let dateTime = new Date(date + " " + time)
-    console.log(dateTime)
     await this.props.createTransaction({
         variables: {
             details,
@@ -66,8 +68,23 @@ class CreateTransaction extends Component {
             amount,
             userId,
             transactionTypeId
+        },
+        update: (store, { data: { createTransaction } }) => {
+          try {
+            const data = store.readQuery({ query: TRANSACTIONS_QUERY, variables: { selectedUser: userId } })
+            data.user.transactions.splice(0, 0, createTransaction) //For now add new entry to beginning of cache array for simplicity
+            store.writeQuery({
+              query: TRANSACTIONS_QUERY,
+              variables: { selectedUser: userId },
+              data
+            })
+          }
+          catch (e) {
+            console.log(e);
+          }
         }
     })
+    this.props.history.push("/transactions")
   }
 }
 
@@ -76,10 +93,27 @@ const CREATE_TRANSACTION = gql`
         $amount: Float!, $userId: ID!, $transactionTypeId: ID!) {
     createTransaction(details: $details, date: $dateTime, amount: $amount, 
         userId: $userId, transactionTypeId: $transactionTypeId) {
-      id
-      details
+        id
+        date
+        details
+        amount
+        transactionType{
+          name
+        }
     }
   }
 `
 
-export default graphql(CREATE_TRANSACTION,{ name: 'createTransaction'} )(CreateTransaction)
+const TRANSACTION_TYPES_QUERY = gql`
+  query TransactionTypes {
+    transactionTypes{
+      id
+      name
+    }
+  }
+`
+
+export default compose(
+  graphql(CREATE_TRANSACTION,{ name: 'createTransaction'} ),
+  graphql(TRANSACTION_TYPES_QUERY,{ name: 'transactionTypesQuery'} )
+)(CreateTransaction)

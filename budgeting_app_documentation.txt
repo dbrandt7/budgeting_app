@@ -41,7 +41,10 @@ create-react-app budgeting_fe
 Add apollo dependency:
 yarn add apollo-client-preset react-apollo graphql-tag graphql
 
-curl -d '{"query":"query Users {\n  users {\n    id\n    name\n    email\n  }\n}","operationName":"Users"}' -H "Content-Type: application/json" -X POST http://localhost:4000/graphiql
+Call graphql api with curl
+curl -d '{"query":"query Users {\n  users {\n    id\n    name\n    email\n  }\n}","operationName":"Users"}' -H "Content-Type: application/json" -X POST http://localhost:4000/api
+
+
 
 
 

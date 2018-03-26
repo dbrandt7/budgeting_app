@@ -10,6 +10,11 @@ defmodule BudgetingBeWeb.Schema do
       end
     end
 
+    field :user, type: :user do
+      arg :id, non_null(:id)
+      resolve &BudgetingBeWeb.UserResolver.find/2
+    end
+
     field :transaction_types, list_of(:transaction_type) do
       resolve fn _params, _info ->
         {:ok, BudgetingBe.Repo.all(BudgetingBe.TransactionType)}
