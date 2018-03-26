@@ -62,3 +62,4 @@ Run app:
 
     yarn start
 ```
+Open app: http://localhost:3000
